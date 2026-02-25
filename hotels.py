@@ -1,13 +1,18 @@
 from fastapi import Body, Query, APIRouter
+from pydantic import BaseModel
 
-router = APIRouter(prefix="/hotel", tags=["Отели"])
+router = APIRouter(prefix="/hotels", tags=["Отели"])
+
+class Hotel(BaseModel):
+    title: str
+    name: str
 
 hotels = [
     {"id": 1, "title": "Sochi", "name": "Красная поляна"},
     {"id": 2, "title": "Дубай", "name": "Бурж-Халифа"}
 ]
 
-@router.get("/hotels", summary="Получить данные об отелях")
+@router.get("/get_hotels", summary="Получить данные об отелях")
 def get_hotels():
     return hotels
 
@@ -31,19 +36,20 @@ def delete_hotel(hotel_id: int):
     return {"OK": 200}
 
 @router.post("", summary="Создаем отель")
-def create_hotel(title: str = Body(embed=True)):
+def create_hotel(hotel_data: Hotel):
     global hotels
     hotels.append({"id": hotels[-1]["id"] + 1,
-                  "title": title})
-    return {"status": 200}
+                  "title": hotel_data.title,
+                   "name": hotel_data.name,})
+    return {"status": "OK"}
 
 @router.put("/{hotel_id}", summary="Полное обновление информации об отеле")
-def update_hotel(hotel_id: int, title: str = Body(), name: str = Body()):
+def update_hotel(hotel_id: int, hotel_data: Hotel):
     global hotels
     hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    hotel["name"] = name
-    hotel["title"] = title
-    return {"status": 200}
+    hotel["name"] = hotel_data.name
+    hotel["title"] = hotel_data.title
+    return {"status": "OK"}
 
 @router.patch("{hotel_id}", summary="Частичное обновление информации об отеле")
 def partial_update_hotel(hotel_id: int, title: str | None = Body(None), name: str | None = Body(None)):
