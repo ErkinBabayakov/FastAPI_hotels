@@ -1,4 +1,4 @@
-from fastapi import Query, APIRouter
+from fastapi import Query, APIRouter, Body
 from schemas.hotels import Hotel, HotelPATCH
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -6,17 +6,21 @@ router = APIRouter(prefix="/hotels", tags=["Отели"])
 
 
 hotels = [
-    {"id": 1, "title": "Sochi", "name": "Красная поляна"},
-    {"id": 2, "title": "Дубай", "name": "Бурж-Халифа"}
+    {"id": 1, "title": "Sochi", "name": "sochi"},
+    {"id": 2, "title": "Дубай", "name": "dubai"},
+    {"id": 3, "title": "Мальдивы", "name": "maldivi"},
+    {"id": 4, "title": "Геленджик", "name": "gelendzhik"},
+    {"id": 5, "title": "Москва", "name": "moscow"},
+    {"id": 6, "title": "Казань", "name": "kazan"},
+    {"id": 7, "title": "Санкт-Петербург", "name": "spb"},
 ]
 
-@router.get("/get_hotels", summary="Получить данные об отелях")
-def get_hotels():
-    return hotels
 
 @router.get("", summary="Получить данные об отеле")
 def get_hotel(id: int | None = Query(None, description="Айди"),
               title: str | None = Query(default=None, description="Отель"),
+              page: int | None = Query(default=None, description="Страница", ge=1),
+              per_page : int | None = Query(default=None, ge=1, lt=30, description="Количество отелей на странице")
               ):
     hotels_ = []
     for hotel in hotels:
@@ -25,6 +29,9 @@ def get_hotel(id: int | None = Query(None, description="Айди"),
         if title and hotel["title"] != title:
             continue
         hotels_.append(hotel)
+
+    if page and per_page:
+        return hotels_[per_page * (page - 1):][:per_page]
     return hotels_
 
 @router.delete("/hotel_id", summary="Удаляем отель")
@@ -34,7 +41,16 @@ def delete_hotel(hotel_id: int):
     return {"OK": 200}
 
 @router.post("", summary="Создаем отель")
-def create_hotel(hotel_data: Hotel):
+def create_hotel(hotel_data: Hotel = Body(openapi_examples={
+    "1": {"summary": "Сочи", "value": {
+        "title": "Отель Сочи 5 звезд у моря",
+        "name": "sochi_u_morya"
+    }},
+    "2": {"summary": "Дубай", "value": {
+        "title": "Отель Дубай у Бурдж-Халиф",
+        "name": "dubay_u_burj_chalifa"
+    }}
+})):
     global hotels
     hotels.append({"id": hotels[-1]["id"] + 1,
                   "title": hotel_data.title,
