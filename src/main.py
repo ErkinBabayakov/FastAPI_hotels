@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 import uvicorn
-from src.hotels import router as hotels_router
+from src.api.hotels import router as hotels_router
 
 
 app = FastAPI()
