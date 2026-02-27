@@ -2,9 +2,9 @@ from pydantic import BaseModel, Field
 
 class Hotel(BaseModel):
     title: str
-    name: str
+    location: str
 
 
 class HotelPATCH(BaseModel):
     title: str | None = None,
-    name: str | None = None
+    location: str | None = None
