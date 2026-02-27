@@ -25,14 +25,12 @@ async def get_hotel(
         )
 
 
-
-
-
 @router.delete("/hotel_id", summary="Удаляем отель")
-def delete_hotel(hotel_id: int):
-    global hotels
-    hotels = [hotel for hotel in hotels if hotel["id"] != hotel_id]
-    return {"OK": 200}
+async def delete_hotel(hotel_id: int):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).delete(id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}
 
 @router.post("", summary="Создаем отель")
 async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
@@ -53,17 +51,15 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
 })
 ):
     async with async_session_maker() as session:
-        add_hotel_stat = insert(HotelsOrm).values(**hotel_data.model_dump())
-        await session.execute(add_hotel_stat)
+        hotel = await HotelsRepository(session).add(hotel_data)
         await session.commit()
-    return {"status": "OK"}
+    return {"status": "OK", "data": hotel}
 
 @router.put("/{hotel_id}", summary="Полное обновление информации об отеле")
-def update_hotel(hotel_id: int, hotel_data: Hotel):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    hotel["name"] = hotel_data.name
-    hotel["title"] = hotel_data.title
+async def update_hotel(hotel_id: int, hotel_data: Hotel):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, id=hotel_id)
+        await session.commit()
     return {"status": "OK"}
 
 @router.patch("{hotel_id}", summary="Частичное обновление информации об отеле")

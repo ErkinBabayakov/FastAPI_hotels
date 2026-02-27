@@ -27,3 +27,6 @@ class HotelsRepository(BaseRepository):
 
             result = await self.session.execute(query)
             return result.scalars().all()
+
+
+
