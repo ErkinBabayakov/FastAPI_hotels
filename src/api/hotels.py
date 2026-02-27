@@ -11,16 +11,16 @@ router = APIRouter(prefix="/hotels", tags=["Отели"])
 @router.get("", summary="Получить данные об отеле")
 async def get_hotel(
         pagination: PaginationDep,
-        id: int | None = Query(None, description="Айди"),
+        location: str | None = Query(None, description="Локация"),
         title: str | None = Query(default=None, description="Отель")
 ):
     per_page = pagination.per_page or 5
     async with async_session_maker() as session:
         query = select(HotelsOrm)
-        if id:
-            query = query.filter_by(id=id)
+        if location:
+            query = query.filter(HotelsOrm.location.ilike(f"%{location.strip()}%"))
         if title:
-            query = query.filter_by(title=title)
+            query = query.filter(HotelsOrm.title.ilike(f"%{title.strip()}%"))
         query = (
             query
             .limit(per_page)
