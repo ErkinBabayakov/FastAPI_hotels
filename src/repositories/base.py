@@ -1,9 +1,5 @@
 from sqlalchemy import select, insert, update, delete
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio.session import AsyncSession
-
-from src.schemas.hotels import Hotel
-
 
 class BaseRepository:
     model = None
