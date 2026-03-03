@@ -3,7 +3,7 @@ from src.api.dependencies import PaginationDep
 from src.database import async_session_maker
 from src.models.hotels import HotelsOrm
 from src.repositories.hotels import HotelsRepository
-from src.schemas.hotels import Hotel, HotelPATCH
+from src.schemas.hotels import Hotel, HotelPATCH, HotelAdd
 from sqlalchemy import insert, select
 
 router = APIRouter(prefix="/hotels", tags=["Отели"])
@@ -33,7 +33,7 @@ async def delete_hotel(hotel_id: int):
     return {"status": "OK"}
 
 @router.post("", summary="Создаем отель")
-async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
+async def create_hotel(hotel_data: HotelAdd = Body(openapi_examples={
     "1": {""
           "summary": "Сочи",
           "value": {
@@ -56,18 +56,20 @@ async def create_hotel(hotel_data: Hotel = Body(openapi_examples={
     return {"status": "OK", "data": hotel}
 
 @router.put("/{hotel_id}", summary="Полное обновление информации об отеле")
-async def update_hotel(hotel_id: int, hotel_data: Hotel):
+async def update_hotel(hotel_id: int, hotel_data: HotelAdd):
     async with async_session_maker() as session:
         await HotelsRepository(session).edit(hotel_data, id=hotel_id)
         await session.commit()
     return {"status": "OK"}
 
 @router.patch("{hotel_id}", summary="Частичное обновление информации об отеле")
-def partial_update_hotel(hotel_id: int, hotel_data: HotelPATCH):
-    global hotels
-    hotel = [hotel for hotel in hotels if hotel["id"] == hotel_id][0]
-    if hotel_data.title:
-        hotel["title"] = hotel_data.title
-    if hotel_data.name:
-        hotel["name"] = hotel_data.name
-    return {"status": 200}
+async def partial_update_hotel(hotel_id: int, hotel_data: HotelPATCH):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id=hotel_id)
+        await session.commit()
+    return {"status": "OK"}
+
+@router.get("/{hotel_id}")
+async def get_hotel(hotel_id: int):
+    async with async_session_maker() as session:
+        return await HotelsRepository(session).get_one_or_none(id=hotel_id)
