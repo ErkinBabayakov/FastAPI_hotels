@@ -9,7 +9,7 @@ from src.api.dependencies import UserIdDep
 router = APIRouter(prefix="/auth", tags=["Аутентификация и авторизация"])
 
 
-@router.post("/register")
+@router.post("/register", summary="Создать пользователя")
 async def register_user(
         data: UserRequestAdd
 ):
@@ -22,7 +22,7 @@ async def register_user(
     return {"status": "ok"}
 
 
-@router.post("/login")
+@router.post("/login", summary="Войти")
 async def login_user(
         data: UserRequestAdd,
         response: Response,
@@ -37,9 +37,16 @@ async def login_user(
         response.set_cookie("access_token", access_token)
         return {"access_token": access_token}
 
-@router.get("/me")
+
+@router.get("/me", summary="Получить данные о пользователе")
 async def get_me(user_id: UserIdDep):
 
     async with async_session_maker() as session:
         user = await UserRepository(session).get_one_or_none(id=user_id)
         return user
+
+
+@router.post("/logout", summary="Выйти")
+async def logout_user(response: Response):
+        response.delete_cookie("access_token")
+        return {"status": "OK"}
