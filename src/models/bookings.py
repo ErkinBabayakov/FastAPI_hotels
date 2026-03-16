@@ -1,5 +1,5 @@
-from datetime import date
-from sqlalchemy import ForeignKey, Column, DateTime
+from datetime import date, datetime
+from sqlalchemy import ForeignKey, DateTime
 from sqlalchemy.sql import func
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
@@ -15,7 +15,6 @@ class BookingsOrm(Base):
     price: Mapped[int]
     date_from: Mapped[date]
     date_to: Mapped[date]
-    created_at: Mapped[DateTime] = Column(DateTime, server_default=func.now(timezone=True))
 
 
 
