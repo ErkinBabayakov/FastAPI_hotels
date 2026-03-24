@@ -1,6 +1,5 @@
-from datetime import date, datetime
-from sqlalchemy import ForeignKey, DateTime
-from sqlalchemy.sql import func
+from datetime import date
+from sqlalchemy import ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 from sqlalchemy.ext.hybrid import hybrid_property
 from src.database import Base

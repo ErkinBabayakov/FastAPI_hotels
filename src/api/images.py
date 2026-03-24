@@ -3,10 +3,9 @@ import shutil
 from fastapi import APIRouter, UploadFile
 from pathlib import Path
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-
 from src.tasks.tasks import resize_image
 
+BASE_DIR = Path(__file__).resolve().parent.parent.parent
 
 router = APIRouter(prefix="/images", tags=["Изображения отелей"])
 

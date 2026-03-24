@@ -16,7 +16,7 @@ async def register_user(db: DBDep, data: UserRequestAdd):
 
         await db.users.add(new_user_data)
         await db.commit()
-    except:
+    except: # noqa: E722
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     return {"status": "ok"}
 
