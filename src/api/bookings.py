@@ -3,6 +3,7 @@ from src.api.dependencies import DBDep, UserIdDep
 from src.schemas.bookings import BookingAddRequest, BookingAdd
 
 
+
 router = APIRouter(prefix="/bookings", tags=["Бронирование номера"])
 
 @router.get("", summary="Получить все бронирования")
@@ -26,7 +27,7 @@ async def add_booking(db: DBDep,
     #Создаем схему данных BookingAdd
     _booking_data = BookingAdd(user_id=user_id, price=room_price, **booking_data.model_dump())
     #Добавляем бронирование конкретному пользователю
-    data = await db.bookings.add(_booking_data)
+    booking = await db.bookings.add_booking(_booking_data, hotel_id=room.hotel_id)
     await db.commit()
-    return {"status": "OK", "data": data}
+    return {"status": "OK", "data": booking}
 

@@ -10,11 +10,14 @@ router = APIRouter(prefix="/auth", tags=["Аутентификация и авт
 
 @router.post("/register", summary="Создать пользователя")
 async def register_user(db: DBDep, data: UserRequestAdd):
-    hashed_password = AuthService().hash_password(data.password)
-    new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
+    try:
+        hashed_password = AuthService().hash_password(data.password)
+        new_user_data = UserAdd(email=data.email, hashed_password=hashed_password)
 
-    await db.users.add(new_user_data)
-    await db.commit()
+        await db.users.add(new_user_data)
+        await db.commit()
+    except:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST)
     return {"status": "ok"}
 
 
@@ -35,8 +38,8 @@ async def login_user(db:DBDep,
 
 @router.get("/me", summary="Получить данные о пользователе")
 async def get_me(db: DBDep, user_id: UserIdDep):
-    user = await db.users.get_one_or_none(id=user_id)
-    return user
+    _user = await db.users.get_one_or_none(id=user_id)
+    return _user
 
 
 @router.post("/logout", summary="Выйти")
