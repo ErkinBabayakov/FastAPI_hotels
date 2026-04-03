@@ -46,8 +46,8 @@ app.include_router(images_router)
 def home():
     return """
     <h1>Выберите тип документации</h1>
-    <h2><a href="http://0.0.0.0:8000/docs">Swagger UI</a><br></h2>
-    <h2><a href="http://0.0.0.0:8000/redoc">ReDoc</a></h2>
+    <h2><a href="https://booking-fastapi-project.ru//docs">Swagger UI</a><br></h2>
+    <h2><a href="https://booking-fastapi-project.ru/redoc">ReDoc</a></h2>
     """
 
 if __name__ == "__main__":
