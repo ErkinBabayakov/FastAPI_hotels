@@ -8,6 +8,7 @@ from pathlib import Path
 
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
+from starlette.responses import HTMLResponse
 
 sys.path.append(str(Path(__file__).parent.parent))
 
@@ -41,7 +42,13 @@ app.include_router(facilities_router)
 app.include_router(images_router)
 
 
-
+@app.get("/", response_class=HTMLResponse, tags=["Главная страница документации"])
+def home():
+    return """
+    <h1>Выберите тип документации</h1>
+    <h2><a href="http://0.0.0.0:8000/docs">Swagger UI</a><br></h2>
+    <h2><a href="http://0.0.0.0:8000/redoc">ReDoc</a></h2>
+    """
 
 if __name__ == "__main__":
     uvicorn.run("main:app", reload=True, host="0.0.0.0", port=8000)
