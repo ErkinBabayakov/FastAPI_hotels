@@ -13,7 +13,7 @@ from src.exceptions import (
     ObjectAlreadyExistsException,
     UserAlreadyExistsException,
     ObjectNotFoundException,
-    UserNotFoundException,
+    UserNotFoundException
 )
 
 

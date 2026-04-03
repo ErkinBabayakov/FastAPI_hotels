@@ -11,7 +11,7 @@ from src.services.hotels import HotelService
 router = APIRouter(prefix="/hotels", tags=["Отели"])
 
 
-@router.get("", summary="Получить данные об отеле")
+@router.get("", summary="Получить данные об отелях")
 @cache(expire=30)
 async def get_hotels(
     pagination: PaginationDep,

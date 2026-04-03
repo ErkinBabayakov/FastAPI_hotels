@@ -59,7 +59,6 @@ def check_date_to_after_date_from(date_from: date, date_to: date) -> None:
             detail="Дата заезда не может быть равна или позже даты выезда",
         )
 
-
 class BronirovanieHTTPException(HTTPException):
     status_code = 500
     detail = None
